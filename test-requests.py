@@ -3,6 +3,7 @@ import xml.dom.minidom  # Beautify xml output
 import zipfile
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 
@@ -11,7 +12,11 @@ API_KEY = os.getenv('API_KEY')
 # Δοκιμαστικό request
 r = requests.get(
     'https://data.bus-data.dft.gov.uk/api/v1/dataset/464/?api_key={}'.format(API_KEY))
-print(r.json())
+r2json = r.text
+#JSON pretty print
+r2json = json.loads(r2json)
+r2json = json.dumps(r2json, indent=2)
+print(r2json)
 
 # Δοκιμαστικό κατεβασμα zip file με xml αρχεία
 url = 'https://data.bus-data.dft.gov.uk/timetable/dataset/464/download/'
