@@ -53,11 +53,10 @@ vehiclejs=dom.getElementsByTagName('VehicleJourney')
 #Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
 for elem in vehiclejs:
     days=elem.getElementsByTagName('DaysOfWeek')
-    for day in days:
-        x=day.getElementsByTagName('Monday')
-        #Αν για ένα δρομολόγιο υπάρχει η Δευτέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
-        if x!=[]:
-            depttime=elem.getElementsByTagName('DepartureTime')
-            print(depttime[0].firstChild.data)
+    x=days[0].getElementsByTagName('Monday')
+    #Αν για ένα δρομολόγιο υπάρχει η Δευτέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
+    if x!=[]:
+        depttime=elem.getElementsByTagName('DepartureTime')
+        print(depttime[0].firstChild.data)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
