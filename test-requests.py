@@ -4,6 +4,7 @@ import zipfile
 from dotenv import load_dotenv
 import os
 import json
+import datetime
 
 load_dotenv()
 
@@ -40,8 +41,23 @@ xml_fname = archive.extract(x)
 
 # or xml.dom.minidom.parseString(xml_string)
 dom = xml.dom.minidom.parse(xml_fname)
-items=dom.getElementsByTagName('DepartureTime')
-for elem in items:
-    print(elem.firstChild.data)
+
+#Name of current day
+today=datetime.datetime.now()
+today=today.strftime('%A')
+print(today)
+
+#Get Vehicle Journeys
+vehiclejs=dom.getElementsByTagName('VehicleJourney')
+
+#Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
+for elem in vehiclejs:
+    days=elem.getElementsByTagName('DaysOfWeek')
+    for day in days:
+        x=day.getElementsByTagName('Monday')
+        #Αν για ένα δρομολόγιο υπάρχει η Δευτέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
+        if x!=[]:
+            depttime=elem.getElementsByTagName('DepartureTime')
+            print(depttime[0].firstChild.data)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
