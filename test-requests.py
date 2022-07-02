@@ -1,10 +1,16 @@
 import requests
 import xml.dom.minidom  # Beautify xml output
 import zipfile
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 
 # Δοκιμαστικό request
 r = requests.get(
-    'https://data.bus-data.dft.gov.uk/api/v1/dataset/464/?api_key=d1f53a1b0a343e6fd958bd713f5ed9d5c1114e0b')
+    'https://data.bus-data.dft.gov.uk/api/v1/dataset/464/?api_key={}'.format(API_KEY))
 print(r.json())
 
 # Δοκιμαστικό κατεβασμα zip file με xml αρχεία
