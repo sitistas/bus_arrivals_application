@@ -33,12 +33,15 @@ files = archive.namelist()
 x = files[0]
 with archive.open(x, "r") as fi:
     data = fi.read()
-    print(data)
+    # print(data)
 
 
 xml_fname = archive.extract(x)
 
 # or xml.dom.minidom.parseString(xml_string)
 dom = xml.dom.minidom.parse(xml_fname)
-pretty_xml_as_string = dom.toprettyxml()
-print(pretty_xml_as_string)
+items=dom.getElementsByTagName('DepartureTime')
+for elem in items:
+    print(elem.firstChild.data)
+# pretty_xml_as_string = dom.toprettyxml()
+# print(pretty_xml_as_string)
