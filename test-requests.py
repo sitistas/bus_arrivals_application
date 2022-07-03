@@ -18,6 +18,15 @@ if id == '':
 line_name = input('Βάλε το όνομα της γραμμής: ')  # or 'SP'
 if line_name == '':
     line_name = 'SP'
+# Όνομα μέρας
+day = input('Διάλεξε μέρα: ')
+if day not in ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday','Today']:
+    day='Monday'
+if day=='Today':
+    today = datetime.datetime.now()
+    day = today.strftime('%A')
+print(day)
+
 
 # Στο αρχείο overall_data_catalogue.csv υπάρχει αντιστοίχιση των γραμμών που περιλαμβάνονται σε κάθε id με το μοναδικό BODS_***** αρχείο, επομένως με την δημιουργία μιας βάσης δεδομένων (ή με ανάκληση από το csv), μπορούμε να επιλέγουμε την γραμμή που θέλουμε
 
@@ -37,15 +46,15 @@ def return_line_data(id, line_name):
 # Δοκιμαστικό request
 r = requests.get(
     'https://data.bus-data.dft.gov.uk/api/v1/dataset/{}/?api_key={}'.format(id, API_KEY))
-r2json = r.text
+
 # JSON pretty print
-r2json = json.loads(r2json)
-r2json = json.dumps(r2json, indent=2)
-print(r2json)
+# r2json = r.text
+# r2json = json.loads(r2json)
+# r2json = json.dumps(r2json, indent=2)
+# print(r2json)
 
 # Δοκιμαστικό κατεβασμα zip file με xml αρχεία
-url = 'https://data.bus-data.dft.gov.uk/timetable/dataset/{}/download/'.format(
-    id)
+url = r.json()['url']
 
 r1 = requests.get(url)
 open("data.zip", "wb").write(r1.content)
@@ -56,7 +65,8 @@ files = archive.namelist()
 
 # print(files)
 
-file_name = return_line_data(id, line_name)
+# file_name = return_line_data(id, line_name) TO BE FIXED
+file_name = 'BODS_PF0007157_12_20220129_0.xml'
 
 with archive.open(file_name, "r") as fi:
     data = fi.read()
@@ -68,21 +78,27 @@ xml_fname = archive.extract(file_name)
 # or xml.dom.minidom.parseString(xml_string)
 dom = xml.dom.minidom.parse(xml_fname)
 
-# Name of current day
-today = datetime.datetime.now()
-today = today.strftime('%A')
-print(today)
-
+def getDeps(day, line_name):
 # Get Vehicle Journeys
-vehiclejs = dom.getElementsByTagName('VehicleJourney')
+    depList=[]
+    vehiclejs = dom.getElementsByTagName('VehicleJourney')
 
-# Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
-for elem in vehiclejs:
-    days = elem.getElementsByTagName('DaysOfWeek')
-    x = days[0].getElementsByTagName('Monday')
-    # Αν για ένα δρομολόγιο υπάρχει η Δευτέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
-    if x != []:
-        depttime = elem.getElementsByTagName('DepartureTime')
-        print(depttime[0].firstChild.data)
+    # Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
+    for elem in vehiclejs:
+        lineRef=elem.getElementsByTagName('LineRef')
+        lineName=(lineRef[0].firstChild.data).rsplit(':',1)
+        if lineName[1]!=line_name:
+            continue
+    
+        days = elem.getElementsByTagName('DaysOfWeek')
+        x = days[0].getElementsByTagName(day)
+        # Αν για ένα δρομολόγιο υπάρχει η Δευτέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
+        if x != []:
+            depttime = elem.getElementsByTagName('DepartureTime')
+            depList.append(depttime[0].firstChild.data)
+    return depList
+
+departureList=getDeps(day, line_name)
+print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
