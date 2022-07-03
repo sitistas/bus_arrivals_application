@@ -1,5 +1,6 @@
 *.zip
 *.xml
+overall_data_catalogue.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
