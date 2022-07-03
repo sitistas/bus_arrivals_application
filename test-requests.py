@@ -23,7 +23,7 @@ if line_name == '':
 
 
 def return_line_data(id, line_name):
-    df = pandas.read_csv('overall_data_catalogue.csv')
+    df = pandas.read_csv('overall_data_sample.csv')
     mask = (df['Line Name'] == line_name)  # & (df['Data ID'] == id)
     # ΔΕ ΛΕΙΤΟΥΡΓΕΙ ΣΩΣΤΑ, ΠΡΕΠΕΙ ΝΑ ΜΠΑΙΝΕΙ ΣΑΝ ΦΙΛΤΡΟ ΚΑΙ ΤΟ ID
     df_new = df[mask]
