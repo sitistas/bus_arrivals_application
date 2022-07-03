@@ -1,6 +1,7 @@
 FROM python
 
 ADD test-requests.py .
+ADD .env .
 
 #Install dependencies
 RUN pip install requests python-dotenv
