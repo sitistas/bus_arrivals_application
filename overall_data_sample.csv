@@ -1,0 +1,10 @@
+Operator,Operator ID,Profile NOCs,Data Type,Status,Last Updated,File Name,TXC File Name,Data Set/Feed Name,Data ID,Mode,National Operator Code,Service Code,Line Name
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_14_20220129_0.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:14,5
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_19_20220129_0.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:19,SKY
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_12_20220129_0.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:12,11 12
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_3_20220129_0.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:3,2
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_24_20220129_0.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:24,9
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_1_20220626_3.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:1,SP
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_19_20220613_1.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:19,SKY
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_PF0007157_3_20220613_1.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,PF0007157:3,2
+Kinch Buses,194,KBUS,Timetables,published,2022-06-26 14:22:36.857173+00:00,kinch_xISW48n.zip,BODS_UZ000KBUS_CS_20220129_0.xml,Kinch Buses_Loughborough_Sileby_20220129,464,Bus,KBUS,UZ000KBUS:CS,CS
