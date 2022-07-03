@@ -78,21 +78,24 @@ xml_fname = archive.extract(file_name)
 # or xml.dom.minidom.parseString(xml_string)
 dom = xml.dom.minidom.parse(xml_fname)
 
+#Get the departure's list for a particular line and day
 def getDeps(day, line_name):
-# Get Vehicle Journeys
+# Get all Vehicle Journeys
     depList=[]
     vehiclejs = dom.getElementsByTagName('VehicleJourney')
 
     # Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
     for elem in vehiclejs:
         lineRef=elem.getElementsByTagName('LineRef')
+        #Οι τελευταίοι χαρακτήρες (1 ή 2) του lineRef ενός VehicleJourney αντιστοιχούν στον αριθμό της γραμμής
         lineName=(lineRef[0].firstChild.data).rsplit(':',1)
+        #Αν η γραμμή του VehicleJourney αντιστοιχεί σε άλλη γραμμή από αυτή που θέλουμε
         if lineName[1]!=line_name:
             continue
     
         days = elem.getElementsByTagName('DaysOfWeek')
         x = days[0].getElementsByTagName(day)
-        # Αν για ένα δρομολόγιο υπάρχει η Δευτέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
+        # Αν για ένα δρομολόγιο υπάρχει η σχετικέ μέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
         if x != []:
             depttime = elem.getElementsByTagName('DepartureTime')
             depList.append(depttime[0].firstChild.data)
