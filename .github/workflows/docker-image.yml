@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: 'kon${{github.repository}}'
+  IMAGE_NAME: konsitistas/bus_arrivals_application
 
 jobs:
 
