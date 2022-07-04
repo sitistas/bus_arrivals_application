@@ -8,7 +8,7 @@ ADD overall_data_catalogue.csv .
 ADD overall_data_sample.csv .
 
 #Install dependencies
-RUN pip install requests python-dotenv pandas geopy plotly
+RUN pip install requests python-dotenv pandas geopy plotly dash
 
 CMD [ "python", "test-requests.py" ]
 
