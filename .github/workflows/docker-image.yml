@@ -9,6 +9,10 @@ on:
   # Allow running the workflow from the Actions Tab
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{github.repository}}
+
 jobs:
 
   build:
