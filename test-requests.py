@@ -78,12 +78,12 @@ dom = xml.dom.minidom.parse(xml_fname)
 
 # Get the departure's list for a particular line and day
 
-
-def getDeps(day, line_name):
+print(file_name)
+def getDeps(day, line_name, dom):
     # Get all Vehicle Journeys
     depList = []
     vehiclejs = dom.getElementsByTagName('VehicleJourney')
-
+    print(len(vehiclejs))
     # Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
     for elem in vehiclejs:
         lineRef = elem.getElementsByTagName('LineRef')
@@ -95,14 +95,45 @@ def getDeps(day, line_name):
 
         days = elem.getElementsByTagName('DaysOfWeek')
         x = days[0].getElementsByTagName(day)
-        # Αν για ένα δρομολόγιο υπάρχει η σχετικέ μέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
+        # Αν για ένα δρομολόγιο υπάρχει η σχετική μέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
         if x != []:
             depttime = elem.getElementsByTagName('DepartureTime')
             depList.append(depttime[0].firstChild.data)
     return depList
 
+def getStops(dom):
+    annotatedStops = dom.getElementsByTagName('AnnotatedStopPointRef')
+    stops={}
+    for stop in annotatedStops:
+        stopRef=stop.getElementsByTagName('StopPointRef')[0].firstChild.data
+        stopName=stop.getElementsByTagName('CommonName')[0].firstChild.data
+        stops[stopRef]=stopName
+    return stops
 
-departureList = getDeps(day, line_name)
-print(departureList)
+
+#JourneyPatternSectionsDictionary
+def getJPSD(dom):
+    JPSD={}
+    JPSections=dom.getElementsByTagName('JourneyPatternSection')
+    for section in JPSections:
+        JPSStops = []
+        stopPoints=section.getElementsByTagName('StopPointRef')
+        JPSStops.append(stopPoints.item(0).firstChild.data)
+        for i in range(1, len(stopPoints), 2):
+            JPSStops.append(stopPoints.item(i).firstChild.data)
+        JPSD[section.attributes['id'].value]=JPSStops
+    return JPSD
+
+#Λεξικό με τις στάσεις (κλειδί ο κωδικός τους)
+stops=getStops(dom)
+
+#Λεξικό με τα JourneyPatternSections με κλειδί το ID τους
+JPSD=getJPSD(dom)
+
+#print(JPSD)
+
+#Δρομολόγια
+departureList = getDeps(day, line_name, dom)
+# print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
