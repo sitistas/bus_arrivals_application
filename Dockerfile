@@ -4,7 +4,7 @@ ADD test-requests.py .
 ADD .env .
 
 #Install dependencies
-RUN pip install requests python-dotenv pandas
+RUN pip install requests python-dotenv pandas geopy
 
 CMD [ "python", "test-requests.py" ]
 
