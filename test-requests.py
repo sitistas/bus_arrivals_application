@@ -7,6 +7,7 @@ import os
 import json
 import datetime
 import pandas
+import plotly.express as px
 
 load_dotenv()
 
@@ -181,19 +182,41 @@ r2 = requests.get(
 open("livedata.xml", "wb").write(r2.content)
 
 livedom = xml.dom.minidom.parse("livedata.xml")
-livePositions = []
-allBuses = livedom.getElementsByTagName('VehicleActivity')
-for bus in allBuses:
-    if bus.getElementsByTagName('OperatorRef')[0].firstChild.data==lineOperator:
-        if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower()==line_name.lower():
-            livePositions.append(bus.getElementsByTagName('Latitude')[0].firstChild.data+", "+bus.getElementsByTagName('Longitude')[0].firstChild.data)
 
-print(livePositions)
-geolocator=Nominatim(user_agent='bus')
-for pos in livePositions:
-    location = geolocator.reverse(pos)
-    print(location.address)
+def getLiveData(lineOperator, line_name, livedom):
+    latList = []
+    lonList = []
+    addresses = []
+    allBuses = livedom.getElementsByTagName('VehicleActivity')
+    for bus in allBuses:
+        if bus.getElementsByTagName('OperatorRef')[0].firstChild.data==lineOperator:
+            if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower()==line_name.lower():
+                latList.append(float(bus.getElementsByTagName('Latitude')[0].firstChild.data))
+                lonList.append(float(bus.getElementsByTagName('Longitude')[0].firstChild.data))
+    geolocator=Nominatim(user_agent='bus')
+    for i in range(len(latList)):
+        location = geolocator.reverse(str(latList[i])+", "+str(lonList[i]))
+        addresses.append(location.address.split(",")[0])
+    return [latList, lonList, addresses]
 
+[latList, lonList, addresses]=getLiveData(lineOperator, line_name, livedom)
+
+
+def plotLiveData(latList, lonList, addresses):
+    #Live Data Dataframe
+    ldf=pandas.DataFrame({
+        'Latitude': latList,
+        'Longitude':lonList,
+        'Address':addresses,
+        'size':1})
+    fig = px.scatter_mapbox(ldf, lat="Latitude", lon="Longitude", hover_name="Address", size='size',
+                            color_discrete_sequence=["blue"], zoom=15, height=800)
+    fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    return fig
+
+fig=plotLiveData(latList, lonList, addresses)
+fig.show()
 # print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
