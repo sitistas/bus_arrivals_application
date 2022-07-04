@@ -1,5 +1,7 @@
 FROM python
 
+LABEL org.opencontainers.image.source https://github.com/sitistas/bus_arrivals_application
+
 ADD test-requests.py .
 ADD .env .
 ADD overall_data_catalogue.csv .
