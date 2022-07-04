@@ -1,4 +1,5 @@
 import requests
+from geopy.geocoders import Nominatim
 import xml.dom.minidom  # Beautify xml output
 import zipfile
 from dotenv import load_dotenv
@@ -53,6 +54,9 @@ r = requests.get(
 
 # Δοκιμαστικό κατεβασμα zip file με xml αρχεία
 url = r.json()['url']
+lineOperator = r.json()['noc']
+lineOperator = lineOperator[0]
+print(lineOperator)
 
 r1 = requests.get(url)
 open("data.zip", "wb").write(r1.content)
@@ -169,6 +173,27 @@ journeyPatterns = getJP(dom)
 print("Οι στάσεις του πρώτου δρομολογίου της ημέρας:")
 stopsList = getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
 print(stopsList)
+
+#livedata ID NEEDS TO BE FIXED
+r2 = requests.get(
+    'https://data.bus-data.dft.gov.uk/api/v1/datafeed/7865/?api_key={}'.format(API_KEY))
+#Χρειάζεται 2ο αρχείο ή όχι;
+open("livedata.xml", "wb").write(r2.content)
+
+livedom = xml.dom.minidom.parse("livedata.xml")
+livePositions = []
+allBuses = livedom.getElementsByTagName('VehicleActivity')
+for bus in allBuses:
+    if bus.getElementsByTagName('OperatorRef')[0].firstChild.data==lineOperator:
+        if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower()==line_name:
+            livePositions.append(bus.getElementsByTagName('Latitude')[0].firstChild.data+", "+bus.getElementsByTagName('Longitude')[0].firstChild.data)
+
+print(livePositions)
+geolocator=Nominatim(user_agent='bus')
+for pos in livePositions:
+    location = geolocator.reverse(pos)
+    print(location.address)
+
 # print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
