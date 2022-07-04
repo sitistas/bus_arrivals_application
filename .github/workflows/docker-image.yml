@@ -9,10 +9,6 @@ on:
   # Allow running the workflow from the Actions Tab
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: konsitistas/bus_arrivals_application
-
 jobs:
 
   build:
@@ -42,7 +38,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/bus_arrivals_application:latest
+        tags: ghcr.io/${{ secrets.DOCKER_HUB_USERNAME }}/bus_arrivals_application:latest
         # Using build cache to reduce build time and reduce number of pulls in Docker Hub
-        cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/bus_arrivals_application:buildcache
-        cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/bus_arrivals_application:buildcache,mode=max
+        cache-from: type=registry,ref=ghcr.io/${{ secrets.DOCKER_HUB_USERNAME }}/bus_arrivals_application:buildcache
+        cache-to: type=registry,ref=ghcr.io/${{ secrets.DOCKER_HUB_USERNAME }}/bus_arrivals_application:buildcache,mode=max
