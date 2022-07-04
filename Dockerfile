@@ -1,7 +1,7 @@
 FROM python
 
 ADD test-requests.py .
-# ADD .env .
+ADD .env .
 
 #Install dependencies
 RUN pip install requests python-dotenv pandas geopy
