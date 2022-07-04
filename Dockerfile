@@ -10,6 +10,8 @@ ADD overall_data_sample.csv .
 #Install dependencies
 RUN pip install requests python-dotenv pandas geopy plotly dash
 
+EXPOSE 8085
+
 CMD [ "python", "bus.py"]
 # ,"-b 0.0.0.0:8050", "app.app:server" ]
 
