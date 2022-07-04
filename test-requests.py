@@ -43,7 +43,6 @@ def return_line_data(id, line_name):
 
 
 # Δοκιμαστικό request
-print('This is the API key: {}'.format(API_KEY))
 r = requests.get(
     'https://data.bus-data.dft.gov.uk/api/v1/dataset/{}/?api_key={}'.format(id, API_KEY))
 
