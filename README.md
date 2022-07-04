@@ -12,4 +12,8 @@
 - Διαδικασία δημιουργίας GitHub Workflow για build Docker Image:
     - Δημιουργία secrets στο GitHub Repo για εισαγωγή του Docker Account Username και ενός Personal Access Toekn
     - GitHub Actions --> Configuration του Docker Image workflow
-    - Configure docker-image.yml file
+    - Configure docker-image.yml file, και δημιουργία του .env αρχείου μέσω του αρχείου αυτού
+
+## How to run:
+- docker pull konsitistas/bus_arrivals_application
+- docker run -ti konsitistas/bus_arrivals_application
