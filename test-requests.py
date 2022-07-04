@@ -8,6 +8,9 @@ import json
 import datetime
 import pandas
 import plotly.express as px
+import dash
+from dash import dcc
+from dash import html, Input, Output
 
 load_dotenv()
 
@@ -216,7 +219,27 @@ def plotLiveData(latList, lonList, addresses):
     return fig
 
 fig=plotLiveData(latList, lonList, addresses)
-fig.show()
+# fig.show()
+
+
+
+app = dash.Dash()
+app.layout = html.Div([
+    dcc.Graph(figure=fig, id='live-update-graph'),
+        dcc.Interval(
+            id='interval-component',
+            interval=10*1000, # in milliseconds
+            n_intervals=0)
+])
+@app.callback(Output('live-update-graph', 'figure'),
+              Input('interval-component', 'n_intervals'))
+def update_graph_live(interval):
+    print('1')
+    latList[0]+=0.0002
+    fig=plotLiveData(latList, lonList, addresses)
+    return fig
+
+app.run_server(debug=True, use_reloader=False)
 # print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
