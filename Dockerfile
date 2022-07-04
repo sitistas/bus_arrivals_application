@@ -10,7 +10,7 @@ ADD overall_data_sample.csv .
 #Install dependencies
 RUN pip install requests python-dotenv pandas geopy plotly dash
 
-CMD [ "python", "test-requests.py", "-b 0.0.0.0:80" ]
+CMD [ "python", "test-requests.py", "-b 0.0.0.0:8050" ]
 
 # docker pull konsitistas/bus_arrivals_application
 # docker run -ti konsitistas/bus_arrivals_application
