@@ -185,7 +185,7 @@ livePositions = []
 allBuses = livedom.getElementsByTagName('VehicleActivity')
 for bus in allBuses:
     if bus.getElementsByTagName('OperatorRef')[0].firstChild.data==lineOperator:
-        if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower()==line_name:
+        if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower()==line_name.lower():
             livePositions.append(bus.getElementsByTagName('Latitude')[0].firstChild.data+", "+bus.getElementsByTagName('Longitude')[0].firstChild.data)
 
 print(livePositions)
