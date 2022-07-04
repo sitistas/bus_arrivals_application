@@ -78,12 +78,13 @@ dom = xml.dom.minidom.parse(xml_fname)
 
 # Get the departure's list for a particular line and day
 
-print(file_name)
+# print(file_name)
 def getDeps(day, line_name, dom):
     # Get all Vehicle Journeys
     depList = []
+    journeyDict={}
     vehiclejs = dom.getElementsByTagName('VehicleJourney')
-    print(len(vehiclejs))
+    # print(len(vehiclejs))
     # Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
     for elem in vehiclejs:
         lineRef = elem.getElementsByTagName('LineRef')
@@ -95,12 +96,15 @@ def getDeps(day, line_name, dom):
 
         days = elem.getElementsByTagName('DaysOfWeek')
         x = days[0].getElementsByTagName(day)
-        # Αν για ένα δρομολόγιο υπάρχει η σχετική μέρα στις μέρες εκτέλεσης, τύπωσε την ώρα εκκίνησης
+        # Αν για ένα δρομολόγιο υπάρχει η σχετική μέρα στις μέρες εκτέλεσης
         if x != []:
-            depttime = elem.getElementsByTagName('DepartureTime')
-            depList.append(depttime[0].firstChild.data)
-    return depList
+            deptTime = elem.getElementsByTagName('DepartureTime')[0].firstChild.data
+            journeyPattern = elem.getElementsByTagName('JourneyPatternRef')[0].firstChild.data
+            depList.append(deptTime)
+            journeyDict[deptTime]=journeyPattern
+    return [depList, journeyDict]
 
+#Δημιουργία λεξικού που αντιστοιχείζει τους κωδικούς των στάσεων στα ονόματά τους
 def getStops(dom):
     annotatedStops = dom.getElementsByTagName('AnnotatedStopPointRef')
     stops={}
@@ -124,16 +128,47 @@ def getJPSD(dom):
         JPSD[section.attributes['id'].value]=JPSStops
     return JPSD
 
+#JourneyPatterns
+def getJP(dom):
+    JP={}
+    
+    JPatterns=dom.getElementsByTagName('JourneyPattern')
+    for pattern in JPatterns:
+        JPSList=[]
+        JPSRefs = pattern.getElementsByTagName('JourneyPatternSectionRefs')
+        for ref in JPSRefs:
+            JPSList.append(ref.firstChild.data)
+        JP[pattern.attributes['id'].value]=JPSList
+    return JP
+
+#Στάση ανα δρομολόγιο με βάση την ώρα του
+def getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departure):
+    stopsList = []
+    jPattern=journeyPerDeparture[departure]
+    JPSections = journeyPatterns[jPattern]
+    for section in JPSections:
+        for stop in JPSD[section]:
+            stopsList.append(stopsDict[stop])
+    return stopsList
+
+
 #Λεξικό με τις στάσεις (κλειδί ο κωδικός τους)
-stops=getStops(dom)
+stopsDict=getStops(dom)
 
 #Λεξικό με τα JourneyPatternSections με κλειδί το ID τους
 JPSD=getJPSD(dom)
 
+journeyPatterns = getJP(dom)
+# print(journeyPatterns)
+
 #print(JPSD)
 
-#Δρομολόγια
-departureList = getDeps(day, line_name, dom)
+#Δρομολόγια και λεξικό με την αντιστοιχία ώρας αναχώρησης με journey pattern
+[departureList, journeyPerDeparture] = getDeps(day, line_name, dom)
+
+print("Οι στάσεις του πρώτου δρομολογίου της ημέρας:")
+stopsList = getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
+print(stopsList)
 # print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
