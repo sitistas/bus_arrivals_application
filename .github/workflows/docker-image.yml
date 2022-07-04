@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: none
 
+  # Allow running the workflow from the Actions Tab
+  workflow_dispatch:
+
 jobs:
 
   build:
