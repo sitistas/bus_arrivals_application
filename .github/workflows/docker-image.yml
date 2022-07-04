@@ -2,7 +2,7 @@ name: bus_arrivals_application_image
 
 on:
   push:
-    branches: none
+    branches: [main]
   pull_request:
     branches: none
 
