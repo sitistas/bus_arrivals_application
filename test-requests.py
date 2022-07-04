@@ -239,7 +239,9 @@ def update_graph_live(interval):
     fig=plotLiveData(latList, lonList, addresses)
     return fig
 
-app.run_server(debug=True, use_reloader=False)
+app.run(
+    host='0.0.0.0',
+    port='8080')
 # print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
