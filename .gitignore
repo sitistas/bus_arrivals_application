@@ -1,6 +1,6 @@
 # Runtime files
-*.zip
 *.xml
+bodsdatacatalogue.zip
 
 # Unit test / coverage reports
 htmlcov/
