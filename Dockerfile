@@ -6,7 +6,7 @@ ADD overall_data_catalogue.csv .
 ADD overall_data_sample.csv .
 ADD data.zip .
 ADD testing.py .
-Add funcionsToBeTested.py .
+ADD funcionsToBeTested.py .
 
 #Install dependencies
 RUN pip install requests python-dotenv pandas geopy plotly dash pytest
