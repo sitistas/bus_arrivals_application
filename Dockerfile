@@ -7,7 +7,7 @@ ADD overall_data_sample.csv .
 ADD data.zip .
 
 #Install dependencies
-RUN pip install requests python-dotenv pandas geopy plotly dash
+RUN pip install requests python-dotenv pandas geopy plotly dash pytest
 
 EXPOSE 8085
 
