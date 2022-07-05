@@ -17,4 +17,4 @@
 
 ## How to run:
 - docker pull konsitistas/bus_arrivals_application
-- docker run -ti konsitistas/bus_arrivals_application
+- docker run -ti -p 8085:8085 konsitistas/bus_arrivals_application
