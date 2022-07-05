@@ -24,3 +24,12 @@ def getDeps(day, line_name, dom):
             depList.append(deptTime)
             journeyDict[deptTime] = journeyPattern
     return [depList, journeyDict]
+
+def getStops(dom):
+    annotatedStops = dom.getElementsByTagName('AnnotatedStopPointRef')
+    stops = {}
+    for stop in annotatedStops:
+        stopRef = stop.getElementsByTagName('StopPointRef')[0].firstChild.data
+        stopName = stop.getElementsByTagName('CommonName')[0].firstChild.data
+        stops[stopRef] = stopName
+    return stops
