@@ -87,10 +87,12 @@ dom = xml.dom.minidom.parse(xml_fname)
 # Get the departure's list for a particular line and day
 
 # print(file_name)
+
+
 def getDeps(day, line_name, dom):
     # Get all Vehicle Journeys
     depList = []
-    journeyDict={}
+    journeyDict = {}
     vehiclejs = dom.getElementsByTagName('VehicleJourney')
     # print(len(vehiclejs))
     # Δες ποια δρομολόγια εκτελούνται τη μέρα που θες (πχ Δευτέρα)
@@ -107,53 +109,61 @@ def getDeps(day, line_name, dom):
         x = days[0].getElementsByTagName(day)
         # Αν για ένα δρομολόγιο υπάρχει η σχετική μέρα στις μέρες εκτέλεσης
         if x != []:
-            deptTime = elem.getElementsByTagName('DepartureTime')[0].firstChild.data
-            journeyPattern = elem.getElementsByTagName('JourneyPatternRef')[0].firstChild.data
+            deptTime = elem.getElementsByTagName('DepartureTime')[
+                0].firstChild.data
+            journeyPattern = elem.getElementsByTagName(
+                'JourneyPatternRef')[0].firstChild.data
             depList.append(deptTime)
-            journeyDict[deptTime]=journeyPattern
+            journeyDict[deptTime] = journeyPattern
     return [depList, journeyDict]
 
-#Δημιουργία λεξικού που αντιστοιχείζει τους κωδικούς των στάσεων στα ονόματά τους
+# Δημιουργία λεξικού που αντιστοιχείζει τους κωδικούς των στάσεων στα ονόματά τους
+
+
 def getStops(dom):
     annotatedStops = dom.getElementsByTagName('AnnotatedStopPointRef')
-    stops={}
+    stops = {}
     for stop in annotatedStops:
-        stopRef=stop.getElementsByTagName('StopPointRef')[0].firstChild.data
-        stopName=stop.getElementsByTagName('CommonName')[0].firstChild.data
-        stops[stopRef]=stopName
+        stopRef = stop.getElementsByTagName('StopPointRef')[0].firstChild.data
+        stopName = stop.getElementsByTagName('CommonName')[0].firstChild.data
+        stops[stopRef] = stopName
     return stops
 
 
-#JourneyPatternSectionsDictionary
+# JourneyPatternSectionsDictionary
 def getJPSD(dom):
-    JPSD={}
-    JPSections=dom.getElementsByTagName('JourneyPatternSection')
+    JPSD = {}
+    JPSections = dom.getElementsByTagName('JourneyPatternSection')
     for section in JPSections:
         JPSStops = []
-        stopPoints=section.getElementsByTagName('StopPointRef')
+        stopPoints = section.getElementsByTagName('StopPointRef')
         JPSStops.append(stopPoints.item(0).firstChild.data)
         for i in range(1, len(stopPoints), 2):
             JPSStops.append(stopPoints.item(i).firstChild.data)
-        JPSD[section.attributes['id'].value]=JPSStops
+        JPSD[section.attributes['id'].value] = JPSStops
     return JPSD
 
-#JourneyPatterns
+# JourneyPatterns
+
+
 def getJP(dom):
-    JP={}
-    
-    JPatterns=dom.getElementsByTagName('JourneyPattern')
+    JP = {}
+
+    JPatterns = dom.getElementsByTagName('JourneyPattern')
     for pattern in JPatterns:
-        JPSList=[]
+        JPSList = []
         JPSRefs = pattern.getElementsByTagName('JourneyPatternSectionRefs')
         for ref in JPSRefs:
             JPSList.append(ref.firstChild.data)
-        JP[pattern.attributes['id'].value]=JPSList
+        JP[pattern.attributes['id'].value] = JPSList
     return JP
 
-#Στάση ανα δρομολόγιο με βάση την ώρα του
+# Στάση ανα δρομολόγιο με βάση την ώρα του
+
+
 def getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departure):
     stopsList = []
-    jPattern=journeyPerDeparture[departure]
+    jPattern = journeyPerDeparture[departure]
     JPSections = journeyPatterns[jPattern]
     for section in JPSections:
         for stop in JPSD[section]:
@@ -161,32 +171,33 @@ def getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, depart
     return stopsList
 
 
-#Λεξικό με τις στάσεις (κλειδί ο κωδικός τους)
-stopsDict=getStops(dom)
+# Λεξικό με τις στάσεις (κλειδί ο κωδικός τους)
+stopsDict = getStops(dom)
 
-#Λεξικό με τα JourneyPatternSections με κλειδί το ID τους
-JPSD=getJPSD(dom)
+# Λεξικό με τα JourneyPatternSections με κλειδί το ID τους
+JPSD = getJPSD(dom)
 
 journeyPatterns = getJP(dom)
 # print(journeyPatterns)
 
-#print(JPSD)
+# print(JPSD)
 
-#Δρομολόγια και λεξικό με την αντιστοιχία ώρας αναχώρησης με journey pattern
+# Δρομολόγια και λεξικό με την αντιστοιχία ώρας αναχώρησης με journey pattern
 [departureList, journeyPerDeparture] = getDeps(day, line_name, dom)
 
 print("Οι στάσεις του πρώτου δρομολογίου της ημέρας:")
-print(len(departureList))
-stopsList = getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
+stopsList = getStopsOfDept(
+    stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
 print(stopsList)
 
-#livedata ID NEEDS TO BE FIXED
+# livedata ID NEEDS TO BE FIXED
 r2 = requests.get(
     'https://data.bus-data.dft.gov.uk/api/v1/datafeed/7865/?api_key={}'.format(API_KEY))
-#Χρειάζεται 2ο αρχείο ή όχι;
+# Χρειάζεται 2ο αρχείο ή όχι;
 open("livedata.xml", "wb").write(r2.content)
 
 livedom = xml.dom.minidom.parse("livedata.xml")
+
 
 def getLiveData(lineOperator, line_name, livedom):
     latList = []
@@ -194,56 +205,62 @@ def getLiveData(lineOperator, line_name, livedom):
     addresses = []
     allBuses = livedom.getElementsByTagName('VehicleActivity')
     for bus in allBuses:
-        if bus.getElementsByTagName('OperatorRef')[0].firstChild.data==lineOperator:
-            if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower()==line_name.lower():
-                latList.append(float(bus.getElementsByTagName('Latitude')[0].firstChild.data))
-                lonList.append(float(bus.getElementsByTagName('Longitude')[0].firstChild.data))
-    geolocator=Nominatim(user_agent='bus')
+        if bus.getElementsByTagName('OperatorRef')[0].firstChild.data == lineOperator:
+            if bus.getElementsByTagName('LineRef')[0].firstChild.data.lower() == line_name.lower():
+                latList.append(float(bus.getElementsByTagName(
+                    'Latitude')[0].firstChild.data))
+                lonList.append(float(bus.getElementsByTagName(
+                    'Longitude')[0].firstChild.data))
+    geolocator = Nominatim(user_agent='bus')
     for i in range(len(latList)):
         location = geolocator.reverse(str(latList[i])+", "+str(lonList[i]))
         addresses.append(location.address.split(",")[0])
     return [latList, lonList, addresses]
 
-[latList, lonList, addresses]=getLiveData(lineOperator, line_name, livedom)
+
+[latList, lonList, addresses] = getLiveData(lineOperator, line_name, livedom)
 
 
 def plotLiveData(latList, lonList, addresses):
-    #Live Data Dataframe
-    ldf=pandas.DataFrame({
+    # Live Data Dataframe
+    ldf = pandas.DataFrame({
         'Latitude': latList,
-        'Longitude':lonList,
-        'Address':addresses,
-        'size':1})
+        'Longitude': lonList,
+        'Address': addresses,
+        'size': 1})
     fig = px.scatter_mapbox(ldf, lat="Latitude", lon="Longitude", hover_name="Address", size='size',
                             color_discrete_sequence=["blue"], zoom=15, height=800)
     fig.update_layout(mapbox_style="open-street-map")
-    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
-fig=plotLiveData(latList, lonList, addresses)
-# fig.show()
 
+fig = plotLiveData(latList, lonList, addresses)
+# fig.show()
 
 
 app = dash.Dash()
 app.layout = html.Div([
     dcc.Graph(figure=fig, id='live-update-graph'),
-        dcc.Interval(
-            id='interval-component',
-            interval=10*1000, # in milliseconds
-            n_intervals=0)
+    dcc.Interval(
+        id='interval-component',
+        interval=10*1000,  # in milliseconds
+        n_intervals=0)
 ])
+
+
 @app.callback(Output('live-update-graph', 'figure'),
               Input('interval-component', 'n_intervals'))
 def update_graph_live(interval):
     print('1')
-    latList[0]+=0.0002
-    fig=plotLiveData(latList, lonList, addresses)
+    latList[0] += 0.0002
+    fig = plotLiveData(latList, lonList, addresses)
     return fig
+
 
 app.run(
     host='0.0.0.0',
-    port='8080')
+    port='8085')
 # print(departureList)
 # pretty_xml_as_string = dom.toprettyxml()
 # print(pretty_xml_as_string)
