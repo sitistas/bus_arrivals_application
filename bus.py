@@ -133,6 +133,15 @@ def getLiveData(lineOperator, line_name, livedom):
         addresses.append(location.address.split(",")[0])
     return [latList, lonList, addresses]
 
+def downloadLiveData(liveid,API_KEY):
+    # Request για λήψη των live data
+    r2 = requests.get(
+        'https://data.bus-data.dft.gov.uk/api/v1/datafeed/{}/?api_key={}'.format(liveid,API_KEY))
+    # Αποθήκευση δεδομένων σε xml
+    open("livedata.xml", "wb").write(r2.content)
+    livedom = xml.dom.minidom.parse("livedata.xml")
+    return livedom
+
 
 API_KEY = os.getenv('API_KEY')
 # Το id του dataset των timetables
@@ -202,12 +211,8 @@ else:
         stopsDict, JPSD, journeyPatterns, journeyPerDeparture, deptTime)
     print(stopsList)
 
-# Request για λήψη των live data
-r2 = requests.get(
-    'https://data.bus-data.dft.gov.uk/api/v1/datafeed/{}/?api_key={}'.format(liveid,API_KEY))
-# Αποθήκευση δεδομένων σε xml
-open("livedata.xml", "wb").write(r2.content)
-livedom = xml.dom.minidom.parse("livedata.xml")
+#Λήψη live δεδομένων
+livedom = downloadLiveData(liveid,API_KEY)
 
 # Αποθήκευση συντεταγμένων live δεδομένων και δημιουργία server αν τα δεδομένα δεν είναι κενά
 [latList, lonList, addresses] = getLiveData(lineOperator, line_name, livedom)
@@ -229,10 +234,12 @@ if len(latList)>0:
     @app.callback(Output('live-update-graph', 'figure'),
                 Input('interval-component', 'n_intervals'))
     def update_graph_live(interval):
-        latList[0] += 0.0002
-        fig = plotLiveData(latList, lonList, addresses)
+        # latList[0] += 0.0002 #Fake motion if needed fow showcase
+        livedom = downloadLiveData(liveid,API_KEY)
+        [latList, lonList, addresses] = getLiveData(lineOperator, line_name, livedom)
+        if len(latList)>0:
+            fig = plotLiveData(latList, lonList, addresses)
         return fig
-
 
     app.run(
         host='0.0.0.0',
