@@ -101,7 +101,6 @@ def getDeps(day, line_name, dom):
         # Οι τελευταίοι χαρακτήρες (1 ή 2) του lineRef ενός VehicleJourney αντιστοιχούν στον αριθμό της γραμμής
         lineName = (lineRef[0].firstChild.data).rsplit(':', 1)
         # Αν η γραμμή του VehicleJourney αντιστοιχεί σε άλλη γραμμή από αυτή που θέλουμε
-        print(lineName)
         if lineName[1] != line_name:
             continue
 
