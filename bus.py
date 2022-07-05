@@ -62,8 +62,8 @@ lineOperator = r.json()['noc']
 lineOperator = lineOperator[0]
 print(lineOperator)
 
-r1 = requests.get(url)
-open("data.zip", "wb").write(r1.content)
+# r1 = requests.get(url)
+# open("data.zip", "wb").write(r1.content)
 
 
 archive = zipfile.ZipFile('data.zip', 'r')
@@ -99,6 +99,7 @@ def getDeps(day, line_name, dom):
         # Οι τελευταίοι χαρακτήρες (1 ή 2) του lineRef ενός VehicleJourney αντιστοιχούν στον αριθμό της γραμμής
         lineName = (lineRef[0].firstChild.data).rsplit(':', 1)
         # Αν η γραμμή του VehicleJourney αντιστοιχεί σε άλλη γραμμή από αυτή που θέλουμε
+        print(lineName)
         if lineName[1] != line_name:
             continue
 
@@ -175,6 +176,7 @@ journeyPatterns = getJP(dom)
 [departureList, journeyPerDeparture] = getDeps(day, line_name, dom)
 
 print("Οι στάσεις του πρώτου δρομολογίου της ημέρας:")
+print(len(departureList))
 stopsList = getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
 print(stopsList)
 
