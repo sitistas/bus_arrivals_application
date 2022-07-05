@@ -4,7 +4,6 @@ import xml.dom.minidom  # Beautify xml output
 import zipfile
 from dotenv import load_dotenv
 import os
-import json
 import datetime
 import pandas
 import plotly.express as px
@@ -26,7 +25,7 @@ def return_line_data(id, line_name):
     print(file_name)
     return file_name
 
-
+#Δημιουργία λίστας δρομολογίων και λεξικού αντιστοίχισης δρομολογίου-διαδρομής
 def getDeps(day, line_name, dom):
     # Get all Vehicle Journeys
     depList = []
@@ -55,8 +54,6 @@ def getDeps(day, line_name, dom):
     return [depList, journeyDict]
 
 # Δημιουργία λεξικού που αντιστοιχείζει τους κωδικούς των στάσεων στα ονόματά τους
-
-
 def getStops(dom):
     annotatedStops = dom.getElementsByTagName('AnnotatedStopPointRef')
     stops = {}
@@ -67,7 +64,7 @@ def getStops(dom):
     return stops
 
 
-# JourneyPatternSectionsDictionary
+# Λεξικό που αντιστοιχίζει τα Journey Pattern Sections στη λίστα στάσεων που το καθένα περιλαμβάνει
 def getJPSD(dom):
     JPSD = {}
     JPSections = dom.getElementsByTagName('JourneyPatternSection')
@@ -80,9 +77,7 @@ def getJPSD(dom):
         JPSD[section.attributes['id'].value] = JPSStops
     return JPSD
 
-# JourneyPatterns
-
-
+# Λεξικό που αντιστοιχίζει Journey Patterns στα Pattern Sections που αυτά περιλαμβάνουν
 def getJP(dom):
     JP = {}
 
@@ -95,9 +90,7 @@ def getJP(dom):
         JP[pattern.attributes['id'].value] = JPSList
     return JP
 
-# Στάση ανα δρομολόγιο με βάση την ώρα του
-
-
+# Λίστα στάσεων για ένα δρομολόγιο με βάση την ώρα του
 def getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departure):
     stopsList = []
     jPattern = journeyPerDeparture[departure]
@@ -107,6 +100,7 @@ def getStopsOfDept(stopsDict, JPSD, journeyPatterns, journeyPerDeparture, depart
             stopsList.append(stopsDict[stop])
     return stopsList
 
+# Σχεδίαση χάρτη με τις θέσεις των λεωφορείων live
 def plotLiveData(latList, lonList, addresses):
     # Live Data Dataframe
     ldf = pandas.DataFrame({
@@ -115,110 +109,12 @@ def plotLiveData(latList, lonList, addresses):
         'Address': addresses,
         'size': 1})
     fig = px.scatter_mapbox(ldf, lat="Latitude", lon="Longitude", hover_name="Address", size='size',
-                            color_discrete_sequence=["blue"], zoom=15, height=800)
+                            color_discrete_sequence=["blue"], zoom=12, height=800)
     fig.update_layout(mapbox_style="open-street-map")
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
-API_KEY = os.getenv('API_KEY')
-# Το id παραμένει ίδιο στο πρώτο request και στο κατέβασμα του zip, οπότε μπορούμε να το περνάμε σαν όρισμα
-id = int(input('Βάλε το Data ID: ') or 464)  # or 464
-# Όνομα γραμμής
-line_name = input('Βάλε το όνομα της γραμμής: ')  # or 'SP'
-if line_name == '':
-    line_name = 'SP'
-# Όνομα μέρας
-day = input('Διάλεξε μέρα: ')
-if day not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Today']:
-    day = 'Monday'
-if day == 'Today':
-    today = datetime.datetime.now()
-    day = today.strftime('%A')
-liveid = int(input('Βάλε το Live Data ID: ') or 7865)  # or 7865
-
-# Δοκιμαστικό request
-r = requests.get(
-    'https://data.bus-data.dft.gov.uk/api/v1/dataset/{}/?api_key={}'.format(id, API_KEY))
-
-# JSON pretty print
-# r2json = r.text
-# r2json = json.loads(r2json)
-# r2json = json.dumps(r2json, indent=2)
-# print(r2json)
-
-# Δοκιμαστικό κατεβασμα zip file με xml αρχεία
-url = r.json()['url']
-lineOperator = r.json()['noc']
-lineOperator = lineOperator[0]
-print(lineOperator)
-
-# r1 = requests.get(url)
-# open("data.zip", "wb").write(r1.content)
-
-
-archive = zipfile.ZipFile('data.zip', 'r')
-files = archive.namelist()
-
-# print(files)
-
-file_name = return_line_data(id, line_name)  # TO BE FIXED
-# file_name = 'BODS_PF0007157_12_20220129_0.xml'
-
-with archive.open(file_name, "r") as fi:
-    data = fi.read()
-    # print(data)
-
-
-xml_fname = archive.extract(file_name)
-
-# or xml.dom.minidom.parseString(xml_string)
-dom = xml.dom.minidom.parse(xml_fname)
-
-# Get the departure's list for a particular line and day
-
-# print(file_name)
-
-
-
-
-
-# Λεξικό με τις στάσεις (κλειδί ο κωδικός τους)
-stopsDict = getStops(dom)
-
-# Λεξικό με τα JourneyPatternSections με κλειδί το ID τους
-JPSD = getJPSD(dom)
-
-journeyPatterns = getJP(dom)
-# print(journeyPatterns)
-
-# print(JPSD)
-
-# Δρομολόγια και λεξικό με την αντιστοιχία ώρας αναχώρησης με journey pattern
-[departureList, journeyPerDeparture] = getDeps(day, line_name, dom)
-print('Ώρες αναχώρησης')
-for dep in departureList:
-    print(dep)
-deptTime = input('Διάλεξε ώρα αναχώρησης για να δεις τις στάσεις: ')
-if deptTime not in departureList:
-    print("Οι στάσεις του πρώτου δρομολογίου της ημέρας:")
-    stopsList = getStopsOfDept(
-        stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
-    print(stopsList)
-else:
-    print("Στάσεις:")
-    stopsList = getStopsOfDept(
-        stopsDict, JPSD, journeyPatterns, journeyPerDeparture, deptTime)
-    print(stopsList)
-
-# livedata ID NEEDS TO BE FIXED
-r2 = requests.get(
-    'https://data.bus-data.dft.gov.uk/api/v1/datafeed/{}/?api_key={}'.format(liveid,API_KEY))
-# Χρειάζεται 2ο αρχείο ή όχι;
-open("livedata.xml", "wb").write(r2.content)
-
-livedom = xml.dom.minidom.parse("livedata.xml")
-
-
+# Λήψη συντεταγμένων των λεωφορείων από τα Live Data του BODS API
 def getLiveData(lineOperator, line_name, livedom):
     latList = []
     lonList = []
@@ -238,6 +134,82 @@ def getLiveData(lineOperator, line_name, livedom):
     return [latList, lonList, addresses]
 
 
+API_KEY = os.getenv('API_KEY')
+# Το id του dataset των timetables
+id = int(input('Βάλε το Data ID: ') or 464)  # or 464
+# Όνομα γραμμής
+line_name = input('Βάλε το όνομα της γραμμής: ')  # or 'SP'
+if line_name == '':
+    line_name = 'SP'
+# Όνομα μέρας
+day = input('Διάλεξε μέρα: ')
+if day not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Today']:
+    day = 'Monday'
+if day == 'Today':
+    today = datetime.datetime.now()
+    day = today.strftime('%A')
+# Το id του dataset των live data
+liveid = int(input('Βάλε το Live Data ID: ') or 7865)  # or 7865
+
+# Αρχικό request για τα timetables
+r = requests.get(
+    'https://data.bus-data.dft.gov.uk/api/v1/dataset/{}/?api_key={}'.format(id, API_KEY))
+
+# Εξαγωγή δεδομένων από το αρχικό request
+url = r.json()['url']
+lineOperator = r.json()['noc']
+lineOperator = lineOperator[0]
+
+# r1 = requests.get(url)
+# open("data.zip", "wb").write(r1.content)
+
+# Ανάγνωση του αρχείου zip που έχει τα timetables και επιλογή του κατάλληλου xml αρχείου για τη γραμμή που επιλέξαμε
+archive = zipfile.ZipFile('data.zip', 'r')
+files = archive.namelist()
+file_name = return_line_data(id, line_name)
+with archive.open(file_name, "r") as fi:
+    data = fi.read()
+
+xml_fname = archive.extract(file_name)
+
+dom = xml.dom.minidom.parse(xml_fname)
+
+# Λεξικό με τις στάσεις (κλειδί ο κωδικός τους)
+stopsDict = getStops(dom)
+
+# Λεξικό με τις στάσεις ανά Journey Pattern Sections
+JPSD = getJPSD(dom)
+
+# Λεξικό με τα Journey Pattern Sections ανά Journey Pattern
+journeyPatterns = getJP(dom)
+
+# Λίστα με δρομολόγια και λεξικό με το journey pattern ανά δρομολόγιο (κλειδί η ώρα)
+[departureList, journeyPerDeparture] = getDeps(day, line_name, dom)
+
+print('Ώρες αναχώρησης')
+for dep in departureList:
+    print(dep)
+deptTime = input('Διάλεξε ώρα αναχώρησης για να δεις τις στάσεις: ')
+if deptTime not in departureList:
+    print("Οι στάσεις του πρώτου δρομολογίου της ημέρας:")
+    stopsList = getStopsOfDept(
+        stopsDict, JPSD, journeyPatterns, journeyPerDeparture, departureList[0])
+    print(stopsList)
+# Αν εισαχθεί μη έγκυρη ώρα
+else:
+    print("Στάσεις:")
+    stopsList = getStopsOfDept(
+        stopsDict, JPSD, journeyPatterns, journeyPerDeparture, deptTime)
+    print(stopsList)
+
+# Request για λήψη των live data
+r2 = requests.get(
+    'https://data.bus-data.dft.gov.uk/api/v1/datafeed/{}/?api_key={}'.format(liveid,API_KEY))
+# Αποθήκευση δεδομένων σε xml
+open("livedata.xml", "wb").write(r2.content)
+livedom = xml.dom.minidom.parse("livedata.xml")
+
+# Αποθήκευση συντεταγμένων live δεδομένων και δημιουργία server αν τα δεδομένα δεν είναι κενά
 [latList, lonList, addresses] = getLiveData(lineOperator, line_name, livedom)
 if len(latList)>0:
     fig = plotLiveData(latList, lonList, addresses)
@@ -257,7 +229,6 @@ if len(latList)>0:
     @app.callback(Output('live-update-graph', 'figure'),
                 Input('interval-component', 'n_intervals'))
     def update_graph_live(interval):
-        print('1')
         latList[0] += 0.0002
         fig = plotLiveData(latList, lonList, addresses)
         return fig
@@ -268,6 +239,3 @@ if len(latList)>0:
         port='8085')
 else:
     print('No Live Data!')
-# print(departureList)
-# pretty_xml_as_string = dom.toprettyxml()
-# print(pretty_xml_as_string)
