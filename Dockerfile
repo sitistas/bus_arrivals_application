@@ -14,7 +14,7 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8085
 
-CMD [ "python", "bus.py"]
+CMD pytest test_bus.py >>results.txt ; cat results.txt; python bus.py
 
 # docker pull konsitistas/bus_arrivals_application
 # docker run -ti -p 8085:8085 konsitistas/bus_arrivals_application
