@@ -2,6 +2,9 @@
 *.xml
 bodsdatacatalogue.zip
 
+# Cache
+__pycache__/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/

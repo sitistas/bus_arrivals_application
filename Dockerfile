@@ -5,9 +5,11 @@ ADD .env .
 ADD overall_data_catalogue.csv .
 ADD overall_data_sample.csv .
 ADD data.zip .
+ADD testing.py .
+ADD functionsToBeTested.py .
 
 #Install dependencies
-RUN pip install requests python-dotenv pandas geopy plotly dash
+RUN pip install requests python-dotenv pandas geopy plotly dash pytest
 
 EXPOSE 8085
 
