@@ -234,7 +234,7 @@ if len(latList)>0:
     @app.callback(Output('live-update-graph', 'figure'),
                 Input('interval-component', 'n_intervals'))
     def update_graph_live(interval):
-        # latList[0] += 0.0002 #Fake motion if needed fow showcase
+        # latList[0] += 0.0002 #Fake motion if needed for showcase
         livedom = downloadLiveData(liveid,API_KEY)
         [latList, lonList, addresses] = getLiveData(lineOperator, line_name, livedom)
         if len(latList)>0:

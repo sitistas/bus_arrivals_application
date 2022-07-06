@@ -16,14 +16,6 @@ def return_line_data(id, line_name):
     return file_name
 
 load_dotenv()
-id= 464
-API_KEY = os.getenv('API_KEY')
-r = requests.get('https://data.bus-data.dft.gov.uk/api/v1/dataset/{}/?api_key={}'.format(id, API_KEY))
-url = r.json()['url']
-# r1 = requests.get(url)
-# open("data.zip", "wb").write(r1.content)
-archive = zipfile.ZipFile('data.zip', 'r')
-
 # Λήψη δεδομένων για τη γραμμή 5 του (προεπιλεγμένου) dataset 464 με τον ίδιο τρόπο που λαμβάνουμε τα δεδομένα στο bus.py
 id= 464
 API_KEY = os.getenv('API_KEY')
