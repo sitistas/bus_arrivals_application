@@ -1,4 +1,4 @@
-# bus_arrivals_application
+# Bus arrivals application
 Πρότζεκτ στα πλαίσια του μαθήματος "Προηγμένες Τεχνικές Προγραμματισμού"
 
 Δημιουργοί:
